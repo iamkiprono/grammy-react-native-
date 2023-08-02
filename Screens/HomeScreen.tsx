@@ -5,8 +5,10 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  Button,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useRef, useMemo, useCallback } from "react";
 import { data } from "../InstaDummyData/data";
 
 import Ant from "react-native-vector-icons/AntDesign";
@@ -14,8 +16,28 @@ import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+
 const HomeScreen = () => {
   const navigation = useNavigation<any>();
+
+  const [isopen, setisopen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [comments, setComments] = useState<any | null>(null);
+
+  // ref
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  // variables
+  const snapPoints = ["60%", "100%"];
+
+  // callbacks
+  const handleSheetChanges = useCallback((index: number) => {
+    bottomSheetRef.current?.snapToIndex(index);
+    setisopen(true);
+  }, []);
+
+  // renders
 
   const calculateTimePosted = (time: string) => {
     const t = +time;
@@ -27,11 +49,11 @@ const HomeScreen = () => {
   };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {data.map((d) => {
           return (
-            <View style={styles.container}>
+            <View key={d.id} style={styles.container}>
               <View
                 style={{
                   display: "flex",
@@ -90,10 +112,16 @@ const HomeScreen = () => {
                 </Text>
                 <View>
                   <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("Comments", {
-                        comments: d.comments.data,
-                      })
+                    onPress={
+                      () => {
+                        handleSheetChanges(0);
+                        setTimeout(() => {
+                          setComments(d.comments.data);
+                        }, 10);
+                      }
+                      // navigation.navigate("Comments", {
+                      //   comments: d.comments.data,
+                      // })
                     }
                   >
                     <Text style={{ marginVertical: 5, color: "grey" }}>
@@ -112,12 +140,60 @@ const HomeScreen = () => {
           );
         })}
       </ScrollView>
+      <BottomSheet
+        onClose={() => {
+          setComments(null);
+          console.log("closed");
+        }}
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        // onChange={handleSheetChanges}
+        enableHandlePanningGesture={true}
+        enablePanDownToClose={true}
+      >
+        <BottomSheetView>
+          {comments?.map((comment: any) => {
+            return (
+              <View
+                key={comment.id}
+                style={{
+                  padding: 10,
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <View>
+                  <Image
+                    source={{ uri: "https://picsum.photos/200/300" }}
+                    style={{ height: 35, width: 35, borderRadius: 50 }}
+                  />
+                </View>
+                <View style={{ marginLeft: 10 }}>
+                  <View style={{ display: "flex", flexDirection: "row" }}>
+                    <Text style={{ fontWeight: "bold" }}>
+                      {comment.from.username}
+                    </Text>
+                    <Text style={{ marginLeft: 20 }}>
+                      {Math.ceil(Math.random() * 10)}h ago
+                    </Text>
+                  </View>
+                  <Text>{comment.text}</Text>
+                  <Text style={{ color: "grey" }}>Reply</Text>
+                </View>
+              </View>
+            );
+          })}
+        </BottomSheetView>
+      </BottomSheet>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     // padding: 10,
     // borderBottomWidth: 1,
     borderBottomColor: "#ccc",

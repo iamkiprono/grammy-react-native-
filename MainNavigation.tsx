@@ -7,6 +7,9 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MCI from "react-native-vector-icons/MaterialCommunityIcons";
 import Ant from "react-native-vector-icons/AntDesign";
 import Fontisto from "react-native-vector-icons/Fontisto";
+import EvilIcons from "react-native-vector-icons/EvilIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import Foundation from "react-native-vector-icons/Foundation";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 const Tab = createBottomTabNavigator();
@@ -15,20 +18,15 @@ const MainNavigation = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconName;
-          if (route.name === "Home") {
-            iconName = "home";
-          } else if (route.name === "Search") {
-            iconName = "search";
-          } else if (route.name === "Add") {
-            iconName = "plus-square";
-          } else if (route.name === "Shop") {
-            iconName = "cart";
-          } else if (route.name === "Account") {
-            iconName = "user-circle-o";
+        tabBarIcon: ({ focused, color, size }) => {
+          if(focused){
+
+            return <Foundation name="home" size={26}/>
+          }else{
+            
+            return <Ionicons name="home-outline" size={24}/>
           }
-          return <FontAwesome name={iconName} size={size} />;
+
         },
 
         // Change this to your desired header text color
@@ -67,12 +65,33 @@ const MainNavigation = () => {
         name="Home"
         component={HomeScreen}
       />
-      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({ focused, color, size }) => {
+            if (focused) {
+              return <FontAwesome name={"search"} size={24} />;
+            } else {
+              return <EvilIcons name={"search"} size={26} />;
+            }
+          },
+        }}
+        name="Search"
+        component={SearchScreen}
+      />
       <Tab.Screen name="Add" component={AddScreen} />
       <Tab.Screen
         options={{
-          tabBarIcon: () => {
-            return <MCI name="shopping-outline" size={24} />;
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            let iconSize;
+            if (focused) {
+              iconName = "shopping";
+              iconSize = 26;
+            } else {
+              iconName = "shopping-outline";
+              iconSize = 24;
+            }
+            return <MCI name={iconName} size={iconSize} />;
           },
         }}
         name="Shop"
