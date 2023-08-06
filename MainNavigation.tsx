@@ -8,8 +8,9 @@ import MCI from "react-native-vector-icons/MaterialCommunityIcons";
 import Ant from "react-native-vector-icons/AntDesign";
 import Fontisto from "react-native-vector-icons/Fontisto";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Octicons from "react-native-vector-icons/Octicons";
 import Foundation from "react-native-vector-icons/Foundation";
+import Feather from "react-native-vector-icons/Feather";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 const Tab = createBottomTabNavigator();
@@ -19,14 +20,11 @@ const MainNavigation = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          if(focused){
-
-            return <Foundation name="home" size={26}/>
-          }else{
-            
-            return <Ionicons name="home-outline" size={24}/>
+          if (focused) {
+            return <Foundation name="home" size={24} />;
+          } else {
+            return <Octicons name="home" size={24} />;
           }
-
         },
 
         // Change this to your desired header text color
@@ -71,14 +69,26 @@ const MainNavigation = () => {
             if (focused) {
               return <FontAwesome name={"search"} size={24} />;
             } else {
-              return <EvilIcons name={"search"} size={26} />;
+              return <EvilIcons name={"search"} size={24} />;
             }
           },
         }}
         name="Search"
         component={SearchScreen}
       />
-      <Tab.Screen name="Add" component={AddScreen} />
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({ focused, color, size }) => {
+            if (focused) {
+              return <FontAwesome name={"plus-square"} size={24} />;
+            } else {
+              return <Feather name={"plus-square"} size={24} />;
+            }
+          },
+        }}
+        name="Add"
+        component={AddScreen}
+      />
       <Tab.Screen
         options={{
           tabBarIcon: ({ focused, color, size }) => {
@@ -97,7 +107,20 @@ const MainNavigation = () => {
         name="Shop"
         component={AddScreen}
       />
-      <Tab.Screen name="Account" component={AccountScreen} />
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({ focused, color, size }) => {
+            if (focused) {
+              return <FontAwesome name={"user-circle"} size={24} />;
+            } else {
+              return <FontAwesome name={"user-o"} size={24} />;
+             
+            }
+          },
+        }}
+        name="Account"
+        component={AccountScreen}
+      />
     </Tab.Navigator>
   );
 };
